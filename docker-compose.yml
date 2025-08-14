@@ -1,0 +1,11 @@
+services:
+  server:
+    container_name: blog_server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /app
+    volumes:
+      - ./:/app
+    ports:
+      - ${SERVER_PORT}:3000
