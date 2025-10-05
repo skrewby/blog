@@ -1,0 +1,13 @@
+package layouts
+
+import "github.com/skrewby/blog/article"
+
+templ Landing(articles []article.Article) {
+	<ul>
+		for _, art := range articles {
+			for _, page := range art.Pages {
+				<li><a href={ templ.URL(page.FullPath) }>{ page.Title }</a></li>
+			}
+		}
+	</ul>
+}

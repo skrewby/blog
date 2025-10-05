@@ -1,7 +1,5 @@
 package layouts
 
-templ Article(name string) {
-	<div>
-		Hello World! And { name }
-	</div>
+templ Article(body string) {
+	@templ.Raw(body)
 }
