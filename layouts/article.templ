@@ -1,5 +1,15 @@
 package layouts
 
+import "github.com/skrewby/blog/components"
+
 templ Article(body string) {
-	@templ.Raw(body)
+	@components.Head("Article")
+	<body>
+		@generalStyles()
+		<main>
+			<div class="container">
+				@templ.Raw(body)
+			</div>
+		</main>
+	</body>
 }

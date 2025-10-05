@@ -16,8 +16,10 @@ import (
 )
 
 type ConvertMeta struct {
-	Title string
-	Tags  []string
+	Title   string
+	Tags    []string
+	Project string
+	Page    int
 }
 
 func (g Generator) convert(contentFolder string, contentFile string, destinationFolder string, destinationFile string) ConvertMeta {
@@ -38,11 +40,23 @@ func (g Generator) convert(contentFolder string, contentFile string, destination
 	var buf bytes.Buffer
 	ctx := parser.NewContext()
 	if err := markdown.Convert([]byte(source), &buf, parser.WithContext(ctx)); err != nil {
-		panic(err)
+		log.Fatalf("Unable to convert markdown file: %v", err)
 	}
 
 	metaData := meta.Get(ctx)
 	title := fmt.Sprint(metaData["Title"])
+
+	project := fmt.Sprint(metaData["Project"])
+	if project == "<nil>" {
+		project = ""
+	}
+
+	page := 0
+	if pageData, ok := metaData["Page"]; ok {
+		if pageInt, ok := pageData.(int); ok {
+			page = pageInt
+		}
+	}
 
 	var tags []string
 	if tagsData, ok := metaData["Tags"]; ok {
@@ -56,7 +70,10 @@ func (g Generator) convert(contentFolder string, contentFile string, destination
 	}
 
 	convertMeta := ConvertMeta{
-		Title: title,
+		Title:   title,
+		Tags:    tags,
+		Project: project,
+		Page:    page,
 	}
 
 	component := layouts.Article(buf.String())

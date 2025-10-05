@@ -1,13 +1,33 @@
 package layouts
 
 import "github.com/skrewby/blog/article"
+import "github.com/skrewby/blog/components"
 
-templ Landing(articles []article.Article) {
-	<ul>
-		for _, art := range articles {
-			for _, page := range art.Pages {
-				<li><a href={ templ.URL(page.FullPath) }>{ page.Title }</a></li>
-			}
-		}
-	</ul>
+templ Landing(posts []article.Article, projects []article.Article) {
+	@components.Head("Skrewby's Blog")
+	<body>
+		@generalStyles()
+		<main>
+			<div class="container">
+				<h1>Skrewby's Blog</h1>
+				<h2>Posts</h2>
+				<ul>
+					for _, art := range posts {
+						for _, page := range art.Pages {
+							<li><a href={ templ.URL(page.FullPath) }>{ page.Title }</a></li>
+						}
+					}
+				</ul>
+				<h2>Projects</h2>
+				for _, art := range projects {
+					<b>{ art.Title }</b>
+					<ul>
+						for _, page := range art.Pages {
+							<li><a href={ templ.URL(page.FullPath) }>{ page.Title }</a></li>
+						}
+					</ul>
+				}
+			</div>
+		</main>
+	</body>
 }

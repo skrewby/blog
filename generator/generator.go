@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"path"
+	"sort"
 	"strings"
 
 	"github.com/skrewby/blog/article"
@@ -19,6 +20,8 @@ type Generator struct {
 	rootPath    string
 	contentPath string
 	articles    []article.Article
+	projects    []article.Article
+	posts       []article.Article
 }
 
 func New(init GeneratorInit) *Generator {
@@ -38,6 +41,8 @@ func (g *Generator) Generate() {
 	// Iterate through all markdown files and generate equivalent html pages
 	g.convertContentFiles(contentFolders)
 
+	g.sortContentFiles()
+
 	// Create the index.html page which will be our blog's landing page
 	g.createRootPage()
 
@@ -49,7 +54,7 @@ func (g *Generator) Generate() {
 
 func (g *Generator) createRootPage() {
 	f := createFile(g.rootPath, "index.html")
-	component := layouts.Landing(g.articles)
+	component := layouts.Landing(g.posts, g.projects)
 	component.Render(context.Background(), f)
 }
 
@@ -74,10 +79,27 @@ func (g *Generator) convertContentFiles(contentFolders []string) {
 				FullPath: path.Join(folder, destinationFileName),
 				Title:    meta.Title,
 				Tags:     meta.Tags,
+				Page:     meta.Page,
+			}
+			if meta.Page == 0 {
+				art.Title = meta.Project
 			}
 			art.Pages = append(art.Pages, page)
 		}
 
 		g.articles = append(g.articles, art)
+	}
+}
+
+func (g *Generator) sortContentFiles() {
+	for _, art := range g.articles {
+		if art.Title == "" {
+			g.posts = append(g.posts, art)
+		} else {
+			sort.Slice(art.Pages, func(i, j int) bool {
+				return art.Pages[i].Page < art.Pages[j].Page
+			})
+			g.projects = append(g.projects, art)
+		}
 	}
 }
