@@ -73,6 +73,7 @@ func (g *Generator) convertContentFiles(contentFolders []string) {
 				FileName: destinationFileName,
 				FullPath: path.Join(folder, destinationFileName),
 				Title:    meta.Title,
+				Tags:     meta.Tags,
 			}
 			art.Pages = append(art.Pages, page)
 		}

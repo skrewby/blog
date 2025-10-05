@@ -17,6 +17,7 @@ import (
 
 type ConvertMeta struct {
 	Title string
+	Tags  []string
 }
 
 func (g Generator) convert(contentFolder string, contentFile string, destinationFolder string, destinationFile string) ConvertMeta {
@@ -42,6 +43,17 @@ func (g Generator) convert(contentFolder string, contentFile string, destination
 
 	metaData := meta.Get(ctx)
 	title := fmt.Sprint(metaData["Title"])
+
+	var tags []string
+	if tagsData, ok := metaData["Tags"]; ok {
+		if tagList, ok := tagsData.([]any); ok {
+			for _, tag := range tagList {
+				if tagStr, ok := tag.(string); ok {
+					tags = append(tags, tagStr)
+				}
+			}
+		}
+	}
 
 	convertMeta := ConvertMeta{
 		Title: title,

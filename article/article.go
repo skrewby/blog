@@ -9,4 +9,5 @@ type ArticlePage struct {
 	FileName string
 	FullPath string
 	Title    string
+	Tags     []string
 }
